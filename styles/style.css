@@ -1,0 +1,13 @@
+body {
+    color: rgb(210, 52, 115);
+    border: 3px solid rgb(17, 11, 1);
+    background-color: rgb(221, 188, 188);
+    margin: 0px;
+    padding: 0px;
+}
+
+
+p {
+    color: rgb(19, 100, 100);
+    background-color: rgb(147, 183, 194);;
+}
