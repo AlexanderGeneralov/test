@@ -1,3 +1,1 @@
-import sys
-
-print(sys.argv)
+print("fuck two three four")
