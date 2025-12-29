@@ -1,5 +1,5 @@
 from db import Base
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, Boolean
 
 
 class Song_model(Base):
@@ -17,3 +17,14 @@ class Artist_mode(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
 
+
+class User_model(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String)
+    username = Column(String)
+    password = Column(String)
+    firstname = Column(String)
+    lastname = Column(String)
+    is_admin = Column(Boolean)
