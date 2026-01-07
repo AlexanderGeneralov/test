@@ -6,12 +6,12 @@ from db import get_db, engine
 from sqlalchemy.orm import Session
 from typing import List
 from sqladmin import Admin
-from admin import UserAdmin, SongAdmin
+from admin import UserAdmin, SongAdmin, authentication_backend
 
 
 app = FastAPI()
 
-admin = Admin(app, engine)
+admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(UserAdmin)
 admin.add_view(SongAdmin)
 
