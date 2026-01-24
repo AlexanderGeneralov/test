@@ -1,12 +1,18 @@
-from fastapi import FastAPI, Depends
+#ссылка для регистрации/использования тестового магазина
+test_shop_link = "https://yookassa.ru/joinups?createTestShop=true"
+
+from fastapi import FastAPI, Depends, HTTPException
+from config import settings
 import uvicorn
-from schema import Song_schema, User_post_schema, User_get_schema
+from schema import Song_schema, User_post_schema, User_get_schema, CreatePaymentRequest_chema
 from models import Song_model, User_model
 from db import get_db, engine
 from sqlalchemy.orm import Session
 from typing import List
 from sqladmin import Admin
 from admin import UserAdmin, SongAdmin, authentication_backend
+from yookassa import Configuration, Payment
+import uuid
 
 
 app = FastAPI()
@@ -14,6 +20,10 @@ app = FastAPI()
 admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(UserAdmin)
 admin.add_view(SongAdmin)
+
+
+Configuration.account_id = settings.shop_accaunt_id
+Configuration.secret_key = settings.shop_secret_key
 
 
 @app.get('/songs/')
@@ -51,5 +61,41 @@ def post_user(data: User_post_schema, db: Session = Depends(get_db)):
     return user
 
 
+@app.post("/create_payment/")
+async def create_payment(req: CreatePaymentRequest_chema):
+    try:
+        payment = Payment.create({
+            "amount": {
+                "value": f"{req.amount:.2f}",
+                "currency": req.currency
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://127.0.0.1:8000/return_url/"
+            },
+            "capture": True,
+            "description": req.description
+        }, uuid.uuid4())
+        
+        # возвращаем клиенту URL для оплаты и id платежа
+        return {
+            "payment_id": payment.id,
+            "confirmation_url": payment.confirmation.confirmation_url
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        
+@app.get("/return_url/")
+async def return_after_payment():
+    return {"message": "you were redirected to this page after payment"}
+
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run(
+        "main:app", 
+        reload=True,
+        host="127.0.0.1", 
+        port=8000,
+        ssl_keyfile="cert/key.pem",
+        ssl_certfile="cert/cert.pem"
+    )

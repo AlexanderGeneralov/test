@@ -1,6 +1,7 @@
-from db import Base
 from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
 
 class Song_model(Base):
     __tablename__ = 'songs'
