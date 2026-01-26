@@ -2,7 +2,6 @@
 test_shop_link = "https://yookassa.ru/joinups?createTestShop=true"
 
 from fastapi import FastAPI, Depends, HTTPException
-from config import settings
 import uvicorn
 from schema import Song_schema, User_post_schema, User_get_schema, CreatePaymentRequest_chema
 from models import Song_model, User_model
@@ -13,7 +12,10 @@ from sqladmin import Admin
 from admin import UserAdmin, SongAdmin, authentication_backend
 from yookassa import Configuration, Payment
 import uuid
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = FastAPI()
 
@@ -22,8 +24,8 @@ admin.add_view(UserAdmin)
 admin.add_view(SongAdmin)
 
 
-Configuration.account_id = settings.shop_accaunt_id
-Configuration.secret_key = settings.shop_secret_key
+Configuration.account_id = os.getenv("SHOP_ACCOUNT_ID")
+Configuration.secret_key = os.getenv("SHOP_SECRET_KEY")
 
 
 @app.get('/songs/')
@@ -73,7 +75,7 @@ async def create_payment(req: CreatePaymentRequest_chema):
                 "type": "redirect",
                 "return_url": "https://127.0.0.1:8000/return_url/"
             },
-            "capture": True,
+            "capture": False,
             "description": req.description
         }, uuid.uuid4())
         

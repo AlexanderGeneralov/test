@@ -1,10 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from config import settings
+import os
+from dotenv import load_dotenv
 
-DATABASE_URL = f"postgresql://{settings.db_user_name}:{settings.db_password}@{settings.db_server}/{settings.db_name}"
+load_dotenv()
 
-engine = create_engine(DATABASE_URL)
+database_url = os.getenv("DATABASE_URL")
+
+engine = create_engine(database_url)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
