@@ -1,4 +1,4 @@
-/test_venv/
-/cert/
+/venv
+/cert
 /config.py
 /.env
