@@ -23,7 +23,9 @@ class User_get_schema(BaseModel):
     lastname: str
     is_admin: bool
 
+
 class CreatePaymentRequest_chema(BaseModel):
     amount: float
     currency: str = "RUB"
     description: str  
+    
