@@ -1,8 +1,8 @@
 from sqladmin import ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
-from models import User_model, Song_model
-from db import SessionLocal
+from models.models import User_model, Song_model
+from database.db import SessionLocal
 import time
 
 
