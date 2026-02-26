@@ -10,7 +10,6 @@ class Song_schema(BaseModel):
 class User_post_schema(BaseModel):
     email: str
     username: str
-    password: str
     firstname: str
     lastname: str
     is_admin: bool

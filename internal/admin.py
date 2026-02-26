@@ -15,7 +15,7 @@ class AdminAuth(AuthenticationBackend):
         # Validate credentials here
         session = SessionLocal()
         user = session.query(User_model).filter(User_model.username == username).first()
-        if user and password == user.password:
+        if user and password == user.password:  #TODO correct this
             if user.is_admin:
                 request.session.update({
                     "token": "secret",
@@ -56,9 +56,6 @@ class UserAdmin(ModelView, model=User_model):
         User_model.lastname,
         User_model.email,
         User_model.is_admin
-        ]
-    column_details_exclude_list = [
-        User_model.password
         ]
     column_sortable_list = [
         User_model.id, 
