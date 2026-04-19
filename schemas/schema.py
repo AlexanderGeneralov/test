@@ -11,20 +11,22 @@ class User_post_schema(BaseModel):
     email: str
     username: str
     firstname: str
-    lastname: str
-    is_admin: bool
+    hashed_password: str
+    is_active: bool
+    is_superuser: bool
+    is_verified: bool
 
 
 class User_get_schema(BaseModel):
     email: str
     username: str
     firstname: str
-    lastname: str
-    is_admin: bool
+    is_active: bool
+    is_superuser: bool
+    is_verified: bool
 
 
 class CreatePaymentRequest_chema(BaseModel):
     amount: float
     currency: str = "RUB"
-    description: str  
-    
+    description: str

@@ -1,8 +1,8 @@
-"""initial rev
+"""initial revision
 
-Revision ID: b91805328dff
+Revision ID: b4317181b24d
 Revises: 
-Create Date: 2026-04-19 18:03:55.131218
+Create Date: 2026-04-19 20:30:46.671878
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b91805328dff'
+revision: str = 'b4317181b24d'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -47,14 +47,18 @@ def upgrade() -> None:
     )
     op.create_table('users',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('email', sa.String(), nullable=True),
-    sa.Column('username', sa.String(), nullable=True),
-    sa.Column('firstname', sa.String(), nullable=True),
-    sa.Column('lastname', sa.String(), nullable=True),
-    sa.Column('is_admin', sa.Boolean(), nullable=True),
-    sa.Column('hashed_password', sa.String(), nullable=True),
-    sa.Column('disabled', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('email', sa.String(length=100), nullable=False),
+    sa.Column('username', sa.String(length=50), nullable=False),
+    sa.Column('firstname', sa.String(length=50), nullable=False),
+    sa.Column('hashed_password', sa.Text(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('is_verified', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('username')
     )
     # ### end Alembic commands ###
 

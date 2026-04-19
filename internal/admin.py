@@ -6,7 +6,7 @@ import time
 from sqladmin import ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
-from models.models import User_model, Song_model, Artist_model, Test_model
+from models.models import User_model, Song_model, Test_model
 from database.db import SessionLocal
 
 
@@ -20,7 +20,7 @@ class AdminAuth(AuthenticationBackend):
         session = SessionLocal()
         user = session.query(User_model).filter(User_model.username == username).first()
         if user and password:  #TODO correct this
-            if user.is_admin:
+            if user.is_superuser:
                 request.session.update({
                     "token": "secret",
                     "expires": time.time() + 600
@@ -56,27 +56,28 @@ class UserAdmin(ModelView, model=User_model):
     category_icon = "fa-solid fa-user"
     column_list = [
         User_model.id,
+        User_model.created_at,
         User_model.username,
         User_model.firstname,
-        User_model.lastname,
         User_model.email,
-        User_model.is_admin,
+        User_model.is_active,
+        User_model.is_superuser,
+        User_model.is_verified,
         ]
     column_sortable_list = [
         User_model.id,
         User_model.username,
         User_model.firstname,
-        User_model.lastname,
         User_model.email,
-        User_model.is_admin,
+        User_model.is_active,
+        User_model.is_superuser,
+        User_model.is_verified,
         ]
     column_searchable_list = [
         User_model.id,
         User_model.username,
         User_model.firstname,
-        User_model.lastname,
         User_model.email,
-        User_model.is_admin,
         ]
     can_create = True
     can_edit = False
