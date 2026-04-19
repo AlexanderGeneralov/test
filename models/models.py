@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, Integer, Boolean
+import uuid
 
+from sqlalchemy import Column, String, Integer, Boolean, UUID
+from sqlalchemy.orm import Mapped, mapped_column
 from database.db import Base
-
 
 
 class Song_model(Base):
@@ -18,12 +19,13 @@ class Artist_model(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    description = Column(String)
 
 
 class User_model(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True,default=uuid.uuid4)
     email = Column(String)
     username = Column(String)
     firstname = Column(String)
@@ -31,3 +33,9 @@ class User_model(Base):
     is_admin = Column(Boolean)
     hashed_password = Column(String)
     disabled = Column(Boolean, default=False)
+
+class Test_model(Base):
+    __tablename__ = "tests"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String)

@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse
-from yookassa import Configuration, Payment
-from yookassa.domain.notification import WebhookNotificationEventType, WebhookNotificationFactory
-from core.config import SHOP_ACCOUNT_ID, SHOP_SECRET_KEY
-from schemas.schema import CreatePaymentRequest_chema
-
 import uuid
 import json
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
+from yookassa import Configuration, Payment
+from core.config import SHOP_ACCOUNT_ID, SHOP_SECRET_KEY
+from schemas.schema import CreatePaymentRequest_chema
 
 
 router = APIRouter(prefix="/payments")
@@ -28,10 +27,10 @@ async def create_payment(req: CreatePaymentRequest_chema):
                 "type": "redirect",
                 "return_url": "https://0.0.0.0:443/payments/return_url/"
             },
-            "capture": True,
+            "capture": False,
             "description": req.description
         }, uuid.uuid4())
-        
+
         # возвращаем клиенту URL для оплаты и id платежа
         return {
             "payment_id": payment.id,
@@ -40,7 +39,8 @@ async def create_payment(req: CreatePaymentRequest_chema):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
+
+
 @router.get("/return_url/")
 async def return_after_payment():
     return {"message": "you were redirected to this page after payment"}
@@ -52,21 +52,21 @@ async def yookassa_webhook(request: Request):
     try:
         # Получаем сырое тело запроса для проверки подписи
         body_bytes = await request.body()
-        
+
         # Парсим JSON
         webhook_data = json.loads(body_bytes.decode('utf-8'))
-        
+
         # Логируем получение вебхука
         print(f"Received webhook: {webhook_data.get('event')}")
-        
+
         # Всегда возвращаем 200 OK ЮКассе
         return JSONResponse(
             content={"status": "received"},
             status_code=200
         )
-        
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON")
+
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=400, detail="Invalid JSON") from e
     except Exception as e:
         # Логируем ошибку, но возвращаем 200 чтобы ЮКасса не повторяла запрос
         print(f"Webhook processing error: {e}")
